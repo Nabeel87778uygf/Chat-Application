@@ -1,6 +1,7 @@
-import User from "../models/user.model.js";
+import User from "../models/user.js"
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
+import { generateToken } from "../utils/utils.js";
 
 
 // SIGNUP
@@ -8,14 +9,20 @@ export const signup = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        // 1. Validation
         if (!name || !email || !password) {
             return res.status(400).json({
                 message: "All fields are required"
             });
         }
 
-        // 2. Check user already exists
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                message: "Invalid email format"
+            });
+        }
+
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({
@@ -23,11 +30,9 @@ export const signup = async (req, res) => {
             });
         }
 
-        // 3. Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // 4. Create user
         const newUser = new User({
             name,
             email,
@@ -36,13 +41,7 @@ export const signup = async (req, res) => {
 
         await newUser.save();
 
-        
-        // 5. Generate token
-        const token = jwt.sign(
-            { id: newUser._id },
-            process.env.JWT_SECRET,
-            { expiresIn: "7d" }
-        );
+        const token = generateToken(newUser._id, res);
 
         res.status(201).json({
             message: "User registered successfully",
@@ -60,6 +59,8 @@ export const signup = async (req, res) => {
         });
     }
 };
+
+
 
 
 
@@ -91,12 +92,15 @@ export const login = async (req, res) => {
             });
         }
 
-        // 4. Generate token
-        const token = jwt.sign(
-            { id: user._id },
-            process.env.JWT_SECRET,
-            { expiresIn: "1d"}
-        );
+        // // 4. Generate token
+        // const token = jwt.sign(
+        //     { id: user._id },
+        //     process.env.JWT_SECRET,
+        //     { expiresIn: "1d" }
+        // );
+
+        //  USE UTILS HERE ALSO
+        const token = generateToken(user._id, res);
 
         res.json({
             message: "Login successful",

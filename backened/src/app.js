@@ -3,10 +3,12 @@ import cookieParser from "cookie-parser";
 
 import authRoutes from "../routes/auth.route.js";
 import messageRoutes from "../routes/message.route.js";
+import path from "path"
 
 
 
 const app = express();
+// const __dirname = path.resolve();
 
 // Middleware
 app.use(express.json());

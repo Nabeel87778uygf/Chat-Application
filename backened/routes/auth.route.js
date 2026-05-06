@@ -1,10 +1,18 @@
 import express from "express";
 import { signup, login, logout, updateProfile } from "../controllers/auth.controller.js";
 import { protectRoute } from '../src/middlewares/auth.middleware.js'
+import { arcjetMiddleware } from "../src/middlewares/arcjet.middleware.js"
 
 const router = express.Router();
 
+
 // Auth routes
+// router.get("/test", arcjetMiddleware, (req, res) => {
+//     res.status(200).json({ message: "This is a test route" });
+// });
+
+router.use(arcjetMiddleware);
+
 router.post("/signup", signup);
 
 router.post("/login", login);

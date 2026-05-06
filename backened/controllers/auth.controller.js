@@ -5,6 +5,9 @@ import { generateToken } from "../utils/utils.js";
 import { sendWelcomeEmail } from "../src/emails/EmailHandlers.js";
 import dotenv from 'dotenv'
 // import {ENV} from '../lib/env.js'
+import { ENV } from '../src/lib/env.js';
+import cloudinary from "../src/lib/cloudinary.js";
+
 dotenv.config();
 
 
@@ -120,7 +123,7 @@ export const login = async (req, res) => {
         // 5. Success response
         res.status(200).json({
             success: true,
-            message: "Login successful",
+            message: "User Login successful",
             token,
             user: {
                 id: user._id,
@@ -143,7 +146,7 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
     try {
         res.cookie("jwt", "", {
-            maxAge:0,
+            maxAge: 0,
             httpOnly: true,
             expires: new Date(0) // instantly expire
         });
@@ -160,3 +163,54 @@ export const logout = async (req, res) => {
         });
     }
 };
+
+
+// UPDATE PROFILE
+export const updateProfile = async (req, res) => {
+    try {
+        const { name, email, profilePic } = req.body;
+
+
+        if (!profilePic) {
+            return res.status(400).json({
+                success: false,
+                message: "Profile picture is required"
+            });
+        }
+
+        const userId = req.user._id;
+
+        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+
+        const updatedUser = await User.findByIdAndUpdate(userId, {
+            profilePic: uploadResponse.secure_url
+        }, {
+            new: true
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
+            user: updatedUser
+        });
+        console.log("updated User is", updatedUser);
+
+        const updatedProfile = await User.findByIdAndUpdate(userId, {
+            name,
+            email,
+            profilePic
+        }, { new: true });
+
+        res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
+            user: updatedProfile
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}

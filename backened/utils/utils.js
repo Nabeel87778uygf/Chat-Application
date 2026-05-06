@@ -7,6 +7,7 @@ export const generateToken = (userId, res) => {
         throw new Error("JWT_SECRET is not configured in environment variables");
     }
 
+
     // Create JWT token
     const token = jwt.sign(
         { userId },        // payload

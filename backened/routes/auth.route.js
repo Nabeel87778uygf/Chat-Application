@@ -16,7 +16,7 @@ router.post("/logout", logout);
 //  Protected routes (Arcjet optional + auth required)
 router.put("/updated-profile", protectRoute, arcjetMiddleware, updateProfile);
 
-router.get("/check-user", protectRoute, arcjetMiddleware, (req, res) => {
+router.get("/check-user", protectRoute, (req, res) => {
     console.log("User is authenticated", req.user);
     res.status(200).json({
         success: true,

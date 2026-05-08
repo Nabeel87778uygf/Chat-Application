@@ -4,12 +4,14 @@ import cookieParser from "cookie-parser";
 import authRoutes from "../routes/auth.route.js";
 import messageRoutes from "../routes/message.route.js";
 import path from "path"
-
+import cors from "cors";
 
 
 const app = express();
 // const __dirname = path.resolve();
 
+
+app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
 // Middleware
 app.use(express.json());
 app.use(cookieParser());

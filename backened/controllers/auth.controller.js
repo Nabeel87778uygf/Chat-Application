@@ -53,9 +53,10 @@ export const signup = async (req, res) => {
         //  Send Welcome Email (background)
         try {
             await sendWelcomeEmail(
-                newUser.email,
-                newUser.name,
-                process.env.CLIENT_URL
+                // // newUser.email,
+                // "nabeelahmad.orkz@gmail.com", // testing fix (Resend restriction)
+                // newUser.name,
+                // process.env.CLIENT_URL
             );
 
         } catch (error) {

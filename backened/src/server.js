@@ -9,8 +9,13 @@ const PORT = ENV.PORT || 4000;
 
 console.log("JWT SECRET:", ENV.JWT_SECRET);
 
+
 // Start server
 app.listen(PORT, async () => {
-    console.log(`Server running on port ${PORT}`);
-    await connectDB();
+    try {
+        console.log(`Server running on port ${PORT}`);
+        await connectDB();
+    } catch (err) {
+        console.log("DB ERROR:", err);
+    }
 });

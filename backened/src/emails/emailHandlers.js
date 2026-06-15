@@ -11,12 +11,13 @@ export const sendWelcomeEmail = async (email, name, clientURL) => {
         });
 
         if (error) {
-            console.error("Email Error:", error);
-            throw new Error("Email failed");
+            console.error("❌ Resend Email Error FULL:", error);
+            return;
         }
 
-        console.log(" Email sent:", data);
+        console.log("✅ Email sent successfully:", data);
+
     } catch (err) {
-        console.log(" Email failed:", err.message);
+        console.log("❌ Email failed FULL:", err);
     }
 };
